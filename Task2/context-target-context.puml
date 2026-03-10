@@ -1,0 +1,57 @@
+@startuml
+!include <C4/C4_Context>
+!include ../styles/yandex_c4_style.puml
+
+title Task2 / C4 Context / Target
+
+Person(patient, "Пациент", "Самозапись, подтверждение, отмена и просмотр только собственных данных")
+Person(reception, "Ресепшен", "Работает с записью, профилем и напоминаниями")
+Person(doctor, "Врач", "Работает с расписанием и медданными по роли")
+Person(accountant, "Кассир и бухгалтер", "Работает с оплатой и финансовыми статусами")
+Person(analyst, "Бизнес-аналитик", "Работает только с разрешенными витринами")
+Person(secops, "ИТ и ИБ оператор", "Контролирует аудит и аномалии")
+
+Enterprise_Boundary(med, "Медикаменте / целевая платформа") {
+  System(opsPlatform, "Операционная платформа", "Профиль пациента, запись, медкарта, биллинг", "Единая точка работы пациента и сотрудников")
+  System(privacyPlatform, "Privacy и access control", "Consent, policy, tagging, lifecycle, controlled export", "Сквозной контроль законности обработки и доступа")
+  System(analyticsPlatform, "Аналитическая платформа", "Classification, pseudonymization, BI, ML, AI", "Работает только с разрешенными наборами")
+  System(observabilityPlatform, "Аудит и аномалии", "Audit trail, monitoring, anomaly detection", "Контроль чтения, экспорта и нетипичных действий")
+}
+
+System_Ext(lab, "Лаборатория", "Внешняя лаборатория по контрактному API")
+System_Ext(paymentProvider, "Платежный провайдер и ККМ", "Эквайринг и фискализация")
+System_Ext(legacy1c, "Legacy 1С контур", "1С:Бухгалтерия и 1С:Торговля/склад на переходный период")
+System_Ext(channels, "Внешние каналы уведомлений", "SMS, e-mail, push и voice")
+
+Rel(patient, opsPlatform, "Самозапись, подтверждение, отмена и self-service")
+Rel(reception, opsPlatform, "Запись, профиль и обработка подтверждений")
+Rel(doctor, opsPlatform, "Расписание и медданные")
+Rel(accountant, opsPlatform, "Оплата и чеки")
+Rel(analyst, analyticsPlatform, "Читает разрешенные витрины")
+Rel(secops, observabilityPlatform, "Контролирует аудит и инциденты")
+Rel(opsPlatform, privacyPlatform, "Проверяет доступ, consent, tagging и stop processing")
+Rel(opsPlatform, analyticsPlatform, "Передает разрешенные наборы")
+Rel(analyticsPlatform, privacyPlatform, "Проверяет policy, consent, legal basis, stop processing и export rules")
+Rel(opsPlatform, observabilityPlatform, "Пишет аудит операций")
+Rel(privacyPlatform, observabilityPlatform, "Пишет policy и lifecycle")
+Rel(analyticsPlatform, observabilityPlatform, "Пишет lineage и экспорт")
+Rel(opsPlatform, lab, "Обменивается назначениями и результатами по контрактному API")
+Rel(opsPlatform, paymentProvider, "Проводит оплату и фискализацию")
+Rel(opsPlatform, legacy1c, "Передает финансовые и закупочные события на переходный период")
+Rel(opsPlatform, channels, "Отправляет напоминания, подтверждения, отмены и уведомления ресепшен")
+
+Lay_D(patient, reception)
+Lay_D(reception, doctor)
+Lay_D(doctor, accountant)
+Lay_D(accountant, analyst)
+Lay_D(analyst, secops)
+
+Lay_R(opsPlatform, privacyPlatform)
+Lay_D(opsPlatform, observabilityPlatform)
+Lay_R(observabilityPlatform, analyticsPlatform)
+
+Lay_D(lab, paymentProvider)
+Lay_D(paymentProvider, legacy1c)
+Lay_D(legacy1c, channels)
+
+@enduml
