@@ -1,0 +1,60 @@
+@startuml
+!include <C4/C4_Container>
+!include ../styles/yandex_c4_style.puml
+
+title C2 / Классификация данных перед публикацией / Executive view
+
+YandexPerson(analyst, "Бизнес-аналитик", "Витрины и выгрузка")
+YandexPerson(secops, "ИТ и ИБ оператор", "Аудит и трассировка")
+System_Ext(privacyPlatform, "Privacy и access control", "Consent, policy, lifecycle, legal basis")
+
+System_Boundary(engine, "Медикаменте / Движок классификации") {
+  Boundary(sourceLayer, "Источники и прием") {
+    Container(sources, "Источники данных", "Source", "Операционная платформа, 1С, лаборатория, документы")
+    Container(ingestGate, "Pre-ingest source screen", "Batch / CDC", "Feed registration и screening")
+  }
+
+  Boundary(classifyLayer, "Классификация и защита") {
+    Container(classification, "Классификация", "Rules + ML", "Профиль, риск, решение")
+    Container(policyGate, "Privacy policy gate", "Policy engine", "Consent, legal basis, stop-processing")
+    Container(sensitiveStore, "Защищенные зоны", "Object Storage", "Restricted и curated наборы")
+  }
+
+  Boundary(publishLayer, "Публикация и контроль") {
+    ContainerDb(mart, "Витрины и агрегаты", "ClickHouse", "Разрешенные публикации")
+    Container(readGate, "Read policy gate", "Policy engine", "Доступ к витринам и export rules")
+    Container(export, "Контролируемый экспорт", "Export service", "Разрешенные выгрузки")
+    Container(lineage, "Аудит и трассировка", "Processing log", "Источник, преобразование, выгрузка")
+  }
+}
+
+Rel(sources, ingestGate, "Передает наборы")
+Rel(ingestGate, classification, "Передает разрешенные наборы")
+Rel(classification, policyGate, "Передает class и risk")
+Rel(policyGate, privacyPlatform, "Проверяет canonical privacy rules")
+Rel(policyGate, sensitiveStore, "Публикует наборы")
+Rel(sensitiveStore, mart, "Подает данные")
+Rel(analyst, readGate, "Запрашивает витрину")
+Rel(readGate, mart, "Разрешает query access")
+Rel(readGate, privacyPlatform, "Проверяет read policy")
+Rel(export, readGate, "Проверяет export policy")
+Rel(export, mart, "Подает выгрузки")
+Rel(classification, lineage, "Пишет classification")
+Rel(policyGate, lineage, "Пишет policy decision")
+Rel(export, lineage, "Пишет export")
+Rel(analyst, export, "Запрашивает выгрузку")
+Rel(secops, lineage, "Контролирует audit")
+
+Lay_R(sources, ingestGate)
+Lay_R(ingestGate, classification)
+Lay_R(classification, policyGate)
+Lay_R(policyGate, sensitiveStore)
+Lay_R(sensitiveStore, mart)
+Lay_D(mart, readGate)
+Lay_R(readGate, export)
+Lay_D(export, lineage)
+Lay_U(policyGate, privacyPlatform)
+Lay_D(readGate, analyst)
+Lay_R(lineage, secops)
+
+@enduml

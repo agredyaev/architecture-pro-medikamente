@@ -1,0 +1,63 @@
+<mxGraphModel dx="1900" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="980" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="title" value="P1 / Запись на прием / As-Is" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;fontColor=#0F172A;fontFamily=Inter;" vertex="1" parent="1">
+      <mxGeometry x="56" y="28" width="420" height="34" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="boundary" value="" style="rounded=1;arcSize=8;absoluteArcSize=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.25;shadow=0;" vertex="1" parent="1">
+      <mxGeometry x="236" y="96" width="884" height="620" as="geometry"/>
+    </mxCell>
+    <mxCell id="boundaryLabel" value="Медикаменте / As-Is" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#1D4ED8;fontFamily=Inter;" vertex="1" parent="1">
+      <mxGeometry x="268" y="112" width="220" height="24" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="fsBoundary" value="" style="rounded=1;arcSize=8;absoluteArcSize=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;shadow=0;" vertex="1" parent="1">
+      <mxGeometry x="700" y="176" width="356" height="382" as="geometry"/>
+    </mxCell>
+    <mxCell id="fsLabel" value="Файловая система" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#1D4ED8;fontFamily=Inter;" vertex="1" parent="1">
+      <mxGeometry x="728" y="190" width="180" height="24" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="patient" value="Пациент&#xa;Лично или по телефону" style="rounded=1;arcSize=8;absoluteArcSize=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.25;fontSize=12;fontStyle=1;fontColor=#475569;spacing=10;shadow=0;fontFamily=Inter;" vertex="1" parent="1">
+      <mxGeometry x="56" y="352" width="168" height="74" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="reception" value="1.0&#xa;Ресепшен&#xa;Журнал записи и реестр пациентов" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F43F5E;strokeWidth=1.4;fontSize=12;fontStyle=1;fontColor=#1E293B;spacing=8;shadow=0;fontFamily=Inter;" vertex="1" parent="1">
+      <mxGeometry x="374" y="220" width="214" height="104" as="geometry"/>
+    </mxCell>
+    <mxCell id="doctor" value="2.0&#xa;Врач&#xa;Просматривает и меняет свой журнал" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F43F5E;strokeWidth=1.4;fontSize=12;fontStyle=1;fontColor=#1E293B;spacing=8;shadow=0;fontFamily=Inter;" vertex="1" parent="1">
+      <mxGeometry x="374" y="476" width="214" height="104" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="patients" value="D1: Реестр пациентов (Excel)&#xa;ФИО, дата рождения, телефон, e-mail" style="shape=mxgraph.lean_mapping.electronic_info_store_2;rounded=1;arcSize=8;absoluteArcSize=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F43F5E;strokeWidth=1.25;fontSize=11;fontColor=#1E293B;spacing=10;shadow=0;fontFamily=Inter;" vertex="1" parent="1">
+      <mxGeometry x="742" y="236" width="272" height="74" as="geometry"/>
+    </mxCell>
+    <mxCell id="journal" value="D2: Журнал приема врача (Excel)&#xa;Дата, время, пациент, комментарии" style="shape=mxgraph.lean_mapping.electronic_info_store_2;rounded=1;arcSize=8;absoluteArcSize=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F43F5E;strokeWidth=1.25;fontSize=11;fontColor=#1E293B;spacing=10;shadow=0;fontFamily=Inter;" vertex="1" parent="1">
+      <mxGeometry x="742" y="430" width="272" height="74" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="e1" value="ФИО, дата рождения, телефон, желаемое время" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;endFill=1;strokeColor=#94A3B8;strokeWidth=1;fontSize=11;fontColor=#475569;labelBackgroundColor=#FFFFFF;align=center;verticalAlign=middle;fontFamily=Inter;" edge="1" source="patient" target="reception" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="Читает и изменяет запись пациента" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;endFill=1;strokeColor=#94A3B8;strokeWidth=1;fontSize=11;fontColor=#475569;labelBackgroundColor=#FFFFFF;align=center;verticalAlign=middle;fontFamily=Inter;" edge="1" source="reception" target="patients" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="Создает или изменяет запись на прием" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;endFill=1;strokeColor=#94A3B8;strokeWidth=1;fontSize=11;fontColor=#475569;labelBackgroundColor=#FFFFFF;align=center;verticalAlign=middle;fontFamily=Inter;" edge="1" source="reception" target="journal" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="642" y="272"/>
+          <mxPoint x="642" y="467"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e4" value="Читает и меняет свой журнал" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;endFill=1;strokeColor=#94A3B8;strokeWidth=1;fontSize=11;fontColor=#475569;labelBackgroundColor=#FFFFFF;align=center;verticalAlign=middle;fontFamily=Inter;" edge="1" source="doctor" target="journal" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="Ссылается на пациента вручную" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;endFill=1;strokeColor=#CBD5E1;strokeWidth=1;fontSize=11;fontColor=#64748B;labelBackgroundColor=#FFFFFF;align=center;verticalAlign=middle;dashed=1;dashPattern=8 6;fontFamily=Inter;" edge="1" source="journal" target="patients" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

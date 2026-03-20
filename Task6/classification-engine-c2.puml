@@ -1,0 +1,104 @@
+@startuml
+!include <C4/C4_Container>
+!include ../styles/yandex_c4_style.puml
+
+LAYOUT_TOP_DOWN()
+skinparam linetype ortho
+skinparam nodesep 25
+skinparam ranksep 35
+
+title C2 / Движок классификации данных
+
+YandexPerson(analyst, "Бизнес-аналитик", "Витрины и выгрузка")
+YandexPerson(secops, "ИТ и ИБ оператор", "Аудит, lineage и карантин")
+System_Ext(privacyPlatform, "Privacy и access control", "Consent, policy, lifecycle, legal basis")
+
+System_Boundary(engine, "Медикаменте / Движок классификации") {
+  Boundary(ingestLayer, "1. Прием и profiling") {
+    Container(sources, "Источники данных", "Source", "Операционная платформа, 1С, лаборатория, документы")
+    Container(ingestScreen, "Pre-ingest source screen", "Batch / CDC", "Feed registration, transport, source purpose, subject refs")
+    ContainerDb(landing, "Landing zone", "Object Storage", "Временный изолированный прием")
+    Container(schemaRegistry, "Schema registry", "Metadata service", "Версии схем, профиль, правила drift")
+  }
+
+  Boundary(classifyLayer, "2. Классификация и privacy gate") {
+    Container(classifier, "Classifier", "Rules + ML", "Класс, риск, confidence")
+    Container(policyGate, "Privacy policy gate", "Policy engine", "Consent, legal basis, stop-processing, tag completeness after classification")
+    ContainerDb(restricted, "Restricted zone", "Object Storage", "Классифицированные чувствительные наборы")
+  }
+
+  Boundary(publishLayer, "3. Трансформация, публикация и доступ") {
+    Container(transform, "Pseudonymization and transform", "Batch / Stream", "Masking, pseudonymization, deny rules")
+    ContainerDb(curated, "Curated pseudonymized zone", "Object Storage", "Подготовленные наборы для аналитики")
+    ContainerDb(mart, "Mart / aggregate zone", "ClickHouse", "BI, ML, AI, отчеты")
+    Container(readGate, "Read policy gate", "Policy engine", "Read policy, subject scope, export rules")
+    Container(export, "Controlled export", "Export service", "Разрешенные выгрузки")
+  }
+
+  Boundary(exceptionLayer, "4. Исключения и ручной разбор") {
+    Container(quarantine, "Quarantine", "Review queue", "Unknown schema, low-confidence, deny")
+  }
+
+  Boundary(governanceLayer, "5. Governance и audit") {
+    Container(lineage, "Audit and lineage", "Processing log", "Источник, преобразование, публикация, выгрузка")
+    YandexKeyManagementService(kms, "KMS", "Шифрование storage-слоев")
+  }
+}
+
+Rel_R(sources, ingestScreen, "Передает наборы")
+Rel_R(ingestScreen, landing, "Принимает разрешенные наборы")
+Rel_D(landing, schemaRegistry, "Регистрирует схему и профиль")
+Rel_R(landing, classifier, "Передает набор")
+Rel_R(schemaRegistry, classifier, "Передает правила схемы")
+Rel_R(classifier, policyGate, "Передает class, risk, confidence и subject refs")
+Rel_U(policyGate, privacyPlatform, "Проверяет consent, legal basis и stop-processing")
+Rel_R(policyGate, restricted, "Публикует размеченный набор")
+Rel_R(restricted, transform, "Подает набор")
+Rel_R(transform, curated, "Псевдонимизирует и маскирует")
+Rel_R(curated, mart, "Публикует разрешенные агрегаты")
+Rel_D(analyst, readGate, "Запрашивает чтение витрины")
+Rel_U(readGate, privacyPlatform, "Проверяет read policy и export rules")
+Rel_L(readGate, mart, "Разрешает query access")
+Rel_D(analyst, export, "Запрашивает выгрузку")
+Rel_L(export, readGate, "Проверяет export policy")
+Rel_L(export, mart, "Читает разрешенные выгрузки")
+
+Rel_U(secops, quarantine, "Разбирает drift и deny cases")
+Rel_U(secops, lineage, "Контролирует аудит и lineage")
+
+Rel_R(quarantine, lineage, "Пишет deny и manual review")
+
+legend right
+|= Свернутые взаимодействия |= Детализация |
+| Quarantine | Pre-ingest source screen -> unregistered feed, transport violations |
+| Quarantine | Classifier -> schema drift, low-confidence |
+| Quarantine | Privacy policy gate -> deny, unresolved policy cases |
+| Audit and lineage | Classifier -> classification |
+| Audit and lineage | Privacy policy gate -> policy decision |
+| Audit and lineage | Pseudonymization and transform -> transform |
+| Audit and lineage | Mart / aggregate zone -> publish |
+| Audit and lineage | Read policy gate -> read decision |
+| Audit and lineage | Controlled export -> export |
+| KMS | At-rest encryption for landing, restricted, curated and mart |
+endlegend
+
+Lay_R(sources, ingestScreen)
+Lay_R(ingestScreen, landing)
+Lay_R(landing, schemaRegistry)
+Lay_D(landing, classifier)
+Lay_R(classifier, policyGate)
+Lay_R(policyGate, restricted)
+Lay_D(restricted, transform)
+Lay_R(transform, curated)
+Lay_R(curated, mart)
+Lay_R(mart, readGate)
+Lay_R(readGate, export)
+Lay_R(restricted, quarantine)
+Lay_D(export, lineage)
+Lay_R(lineage, kms)
+Lay_U(policyGate, privacyPlatform)
+Lay_U(readGate, analyst)
+Lay_D(lineage, secops)
+Lay_R(quarantine, lineage)
+
+@enduml

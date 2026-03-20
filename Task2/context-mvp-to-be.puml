@@ -1,0 +1,35 @@
+@startuml
+!include <C4/C4_Context>
+!include ../styles/yandex_c4_style.puml
+
+title Task2 / C4 Context / MVP
+
+Person(patient, "Пациент", "Самозапись и просмотр только своей записи")
+Person(reception, "Ресепшен", "Видит и подтверждает запись")
+Person(doctor, "Врач", "Видит свое расписание и напоминания")
+
+Enterprise_Boundary(med, "Медикаменте / MVP") {
+  System(mvpPlatform, "MVP patient platform", "Портал пациента, АРМ ресепшен, реестр записей", "Единый контур записи и напоминаний")
+  System(privacyPlatform, "Privacy and access control", "Consent, policy, tagging, lifecycle", "Проверка доступа и stop processing")
+  System(observabilityPlatform, "Audit and anomaly control", "Audit trail, monitoring", "Контроль чтения, изменения и уведомлений")
+}
+
+System_Ext(channels, "Внешние каналы уведомлений", "SMS, e-mail, push")
+
+Rel(patient, mvpPlatform, "Самозапись и self-service")
+Rel(reception, mvpPlatform, "Работает с записью и профилем")
+Rel(doctor, mvpPlatform, "Видит свое расписание")
+Rel(mvpPlatform, privacyPlatform, "Проверяет доступ, consent и policy")
+Rel(mvpPlatform, observabilityPlatform, "Пишет аудит операций")
+Rel(privacyPlatform, observabilityPlatform, "Пишет policy и lifecycle события")
+Rel(mvpPlatform, channels, "Отправляет напоминания пациенту и специалисту")
+Rel(channels, patient, "Доставляет напоминание")
+Rel(channels, doctor, "Доставляет напоминание")
+
+Lay_D(patient, reception)
+Lay_D(reception, doctor)
+Lay_R(mvpPlatform, privacyPlatform)
+Lay_D(mvpPlatform, observabilityPlatform)
+Lay_R(observabilityPlatform, channels)
+
+@enduml

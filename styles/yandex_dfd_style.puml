@@ -1,0 +1,60 @@
+' ============================================================================
+' YANDEX DFD STYLE
+' ============================================================================
+
+!pragma layout smetana
+left to right direction
+
+skinparam dpi 220
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultFontName "IBM Plex Sans", "Segoe UI", Arial, sans-serif
+skinparam defaultFontSize 12
+skinparam defaultFontColor #0F172A
+skinparam ArrowColor #64748B
+skinparam ArrowFontColor #475569
+skinparam ArrowFontSize 11
+skinparam ArrowThickness 1
+skinparam nodesep 60
+skinparam ranksep 90
+skinparam roundCorner 18
+skinparam TitleFontSize 18
+skinparam TitleFontStyle bold
+skinparam TitleFontColor #0F172A
+
+skinparam rectangle {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #334155
+  BorderThickness 1
+  RoundCorner 14
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #3B82F6
+  FontColor #0F172A
+  BorderThickness 1
+}
+
+skinparam database {
+  BackgroundColor #FFFFFF
+  BorderColor #10B981
+  FontColor #0F172A
+  BorderThickness 1
+}
+
+skinparam file {
+  BackgroundColor #FFFFFF
+  BorderColor #10B981
+  FontColor #0F172A
+  BorderThickness 1
+}
+
+skinparam storage {
+  BackgroundColor #FFFFFF
+  BorderColor #10B981
+  FontColor #0F172A
+  BorderThickness 1
+}
